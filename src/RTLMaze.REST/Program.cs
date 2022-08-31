@@ -1,3 +1,5 @@
+global using RTLMaze.REST.Models.Responses;
+
 using RTLMaze.REST.Startup;
 
 using Microsoft.AspNetCore.Mvc;

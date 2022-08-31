@@ -3,6 +3,7 @@ obj
 .vs
 *.code-workspace
 *.db
+*.db-*
 
 # Ignore migrations folder while testing
 **/Migrations

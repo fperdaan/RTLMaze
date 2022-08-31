@@ -23,6 +23,24 @@ public partial class RTLMazeStorageContext : DbContext
 					{ "medium", "https://static.tvmaze.com/uploads/images/medium_portrait/0/6.jpg" },
 					{ "original", "https://static.tvmaze.com/uploads/images/original_untouched/0/6.jpg" }
 				}
+			},
+
+			new Title( name: "Person of Interest", type: "Scripted", language:  "English" ){
+				ID = 2, 
+				Genres = new string[]{ "Action", "Science-Fiction", "Crime" },
+				Images = new Dictionary<string,string>(){ 
+					{ "medium", "https://static.tvmaze.com/uploads/images/medium_portrait/0/6.jpg" },
+					{ "original", "https://static.tvmaze.com/uploads/images/original_untouched/0/6.jpg" }
+				}
+			},
+
+			new Title( name: "Bitten", type: "Scripted", language:  "English" ){
+				ID = 3, 
+				Genres = new string[]{ "Drama", "Horror", "Romance" },
+				Images = new Dictionary<string,string>(){ 
+					{ "medium", "https://static.tvmaze.com/uploads/images/medium_portrait/0/6.jpg" },
+					{ "original", "https://static.tvmaze.com/uploads/images/original_untouched/0/6.jpg" }
+				}
 			}
 		);
 	}
