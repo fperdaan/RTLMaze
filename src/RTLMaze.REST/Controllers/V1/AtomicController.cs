@@ -7,7 +7,7 @@ using RTLMaze.REST.ViewModel;
 
 namespace RTLMaze.REST.Controllers.V1;
 
-abstract public class AtomicController<T> : ControllerBase where T : IStorableEntity
+abstract public partial class AtomicController<T> : ControllerBase where T : IStorableEntity
 {
 	protected IRepository<T> _repo;
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RTLMaze.REST.Models.Responses;
 
-public class ResponseError<T> : Response<T>
+public partial class ResponseError<T> : Response<T>
 {
 	public IDictionary<string, string[]>? Errors { get; set; }
 

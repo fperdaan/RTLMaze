@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace RTLMaze.REST.Models.Responses;
 
-public class Response<T> : IConvertToActionResult
+public partial class Response<T> : IConvertToActionResult
 {
 	public HttpStatusCode Code { get; set; }
 	public T? Value { get; set; }

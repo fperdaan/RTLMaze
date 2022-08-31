@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace RTLMaze.Models;
 
-public class Title : StorableEntity, ITitle
+public partial class Title : StorableEntity, ITitle
 {
 	public string Name { get; set; }
 	public string Type { get; set; }

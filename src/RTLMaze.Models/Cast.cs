@@ -1,6 +1,6 @@
 namespace RTLMaze.Models;
 
-public class Cast : ICast
+public partial class Cast : ICast
 {
 	public IPerson Person { get; set; }
 	public ITitle Title { get; set; }

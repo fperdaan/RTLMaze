@@ -1,6 +1,6 @@
 namespace RTLMaze.Models;
 
-public class Person : StorableEntity, IPerson
+public partial class Person : StorableEntity, IPerson
 {
 	public string Name { get; set; }
 	public DateOnly BirthDay { get; set; }

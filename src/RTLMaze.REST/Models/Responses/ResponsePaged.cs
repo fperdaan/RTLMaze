@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 
 namespace RTLMaze.REST.Models.Responses;
 
-public class ResponsePaged<T> : Response<IAsyncEnumerable<T>>
+public partial class ResponsePaged<T> : Response<IAsyncEnumerable<T>>
 {
 	//public Pagination Pagination { get; }
 
