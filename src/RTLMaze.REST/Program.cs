@@ -5,6 +5,8 @@ using RTLMaze.REST.Startup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 
 var builder = WebApplication.CreateBuilder( args );
 
@@ -24,6 +26,11 @@ builder.Services.ConfigureOptions<SwaggerVersionProvider>();
 builder.Services.AddSwaggerGen( c => 
 {
 	c.DocumentFilter<SwaggerLatestSchemeFilter>(); 
+	c.MapType<DateOnly>(() => new OpenApiSchema { 
+		Type = "string",
+		Pattern = SwaggerDateOnlySerializer.DATE_FORMAT,
+		Example = new OpenApiString( DateOnly.FromDateTime( DateTime.Now ).ToString( SwaggerDateOnlySerializer.DATE_FORMAT ) )
+	});
 });
 
 // -- Configure versioning api
@@ -38,6 +45,12 @@ builder.Services.AddVersionedApiExplorer( setup =>
 {
 	setup.GroupNameFormat = "'v'VVV";
 	setup.SubstituteApiVersionInUrl = true;
+});
+
+// Overload default error response with our model
+builder.Services.Configure<ApiBehaviorOptions>( options => 
+{
+    options.InvalidModelStateResponseFactory = context => new ResponseError<bool>( new ValidationProblemDetails( context.ModelState ) ).Convert();
 });
 
 // -- Configure cors ( enable all for now )
