@@ -1,6 +1,7 @@
 global using RTLMaze.REST.Models.Responses;
 
 using RTLMaze.REST.Extensions;
+using RTLMaze.Core;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -23,6 +24,7 @@ mvcBuilder.AddJsonOptions( options =>
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
 	options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
+	options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter() );
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

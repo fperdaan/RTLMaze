@@ -1,31 +1,51 @@
-﻿using System.Net.Http.Formatting;
-using System.Text.Json;
-using Newtonsoft.Json;
-
-using RTLMaze.Core.Extensions;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using RTLMaze.Core;
+using RTLMaze.Core.Scraper;
 using RTLMaze.Models;
 
 // -- Temp used for reading data
-JsonConvert.DefaultSettings = () => new JsonSerializerSettings{ Formatting = Formatting.Indented, Converters = { new DateOnlySerializer(), new DateOnlySerializerNullable() } };
+	
+var jsonOptions = new JsonSerializerOptions { 
+	PropertyNameCaseInsensitive = true,
+	WriteIndented = true,
+	Converters = { 
+		new DateOnlySerializer(), 
+		new JsonStringEnumConverter(),
+		new CountrySerializer()
+	}	
+};
 
-// For some funny reason this uses newtonsoft which is incompetible with our default converter from the rest project
-var formatters = new MediaTypeFormatterCollection();
-var jsonFormatter = formatters.OfType<JsonMediaTypeFormatter>().FirstOrDefault();
-jsonFormatter?.SerializerSettings.Converters.Add( new DateOnlySerializer() );
-jsonFormatter?.SerializerSettings.Converters.Add( new DateOnlySerializerNullable() );
 
-HttpClient client = new HttpClient();
-HttpResponseMessage response = await client.GetAsync( "https://api.tvmaze.com/shows/1" );
+// var timestamp = new DateTimeOffset( DateTime.UtcNow ).AddDays( -7 ).ToUnixTimeSeconds();
 
-if ( response.IsSuccessStatusCode )
-{
-	var obj = await response.Content.ReadAsAsync<Title>( formatters );
+// var source = new FileStream( "Local/shows.json", FileMode.Open );
 
-	Console.WriteLine( obj.Name );
-	Console.WriteLine( JsonConvert.SerializeObject( obj ) );
+// // var source = new HttpSource()
+// // 				.FromUrl("https://api.tvmaze.com/updates/shows")
+// // 	 			.SetMaxRequestAttempts( 10 )
+// //				.GetSource();
 
-}
-else 
-{
-	Console.WriteLine("Something went wrong");
-}
+// var result = new JsonStreamProcessor<Dictionary<string, int>>()
+// 				.Process( source );
+
+// var updated = result
+// 				.Where( kv => kv.Value >= timestamp )
+// 				.Select( kv => Int32.Parse( kv.Key ) )
+// 				.ToList();
+
+// Console.WriteLine( updated.Count() );
+
+var source = new FileStream( "Local/person.json", FileMode.Open );
+
+// var source = new HttpSource()
+// 				.FromUrl("https://api.tvmaze.com/updates/shows/1?embed=cast")
+// 	 			.SetMaxRequestAttempts( 10 )
+//				.GetSource();
+
+
+var result = new JsonStreamProcessor<Person>()
+				.SetJsonOptions( jsonOptions )
+				.Process( source );
+
+Console.WriteLine( JsonSerializer.Serialize( result, jsonOptions ) );
