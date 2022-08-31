@@ -1,5 +1,9 @@
 # RTLMaze
 
+## Intro
+
+Scrapes information from the [TVmaze API](https://www.tvmaze.com/api) and make it availible trough our own API. Allowing us to change the datamodels, and combine additional information from other sources in the future.  
+
 ## Known issues
 
 ### OData REST Protocol
