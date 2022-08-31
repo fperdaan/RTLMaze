@@ -1,12 +1,13 @@
 global using RTLMaze.REST.Models.Responses;
 
-using RTLMaze.REST.Startup;
+using RTLMaze.REST.Extensions;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder( args );
 
@@ -15,6 +16,14 @@ var builder = WebApplication.CreateBuilder( args );
 # region Start configuration
 
 var mvcBuilder = builder.Services.AddControllers();
+
+mvcBuilder.AddJsonOptions( options => 
+{
+	options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+	options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -28,8 +37,8 @@ builder.Services.AddSwaggerGen( c =>
 	c.DocumentFilter<SwaggerLatestSchemeFilter>(); 
 	c.MapType<DateOnly>(() => new OpenApiSchema { 
 		Type = "string",
-		Pattern = SwaggerDateOnlySerializer.DATE_FORMAT,
-		Example = new OpenApiString( DateOnly.FromDateTime( DateTime.Now ).ToString( SwaggerDateOnlySerializer.DATE_FORMAT ) )
+		Pattern = DateOnlySerializer.DATE_FORMAT,
+		Example = new OpenApiString( DateOnly.FromDateTime( DateTime.Now ).ToString( DateOnlySerializer.DATE_FORMAT ) )
 	});
 });
 

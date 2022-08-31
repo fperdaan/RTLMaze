@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace RTLMaze.REST.Startup;
+namespace RTLMaze.REST.Extensions;
 
 /// <summary>
 /// Filters out the request calls to the /latest/ schemes from our swagger UI. 

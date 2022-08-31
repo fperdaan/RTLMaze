@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RTLMaze.DAL\RTLMaze.DAL.csproj" />
     <ProjectReference Include="..\RTLMaze.Models\RTLMaze.Models.csproj" />
+    <ProjectReference Include="..\RTLMaze.Core\RTLMaze.Core.csproj" />
   </ItemGroup>
 
 </Project>

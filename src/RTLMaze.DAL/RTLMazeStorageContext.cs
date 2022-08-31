@@ -16,28 +16,28 @@ public partial class RTLMazeStorageContext : DbContext
 	{
 		// -- Seed data
 		builder.Entity<Title>().HasData( 	
-			new Title( name: "Under the Dome", type: "Scripted", language:  "English" ){
+			new Title( name: "Under the Dome", type: "Scripted", language:  "English", premiered: DateOnly.Parse("2011-09-22") ){
 				ID = 1, 
 				Genres = new string[]{ "Drama", "Science-Fiction", "Thriller" },
-				Images = new Dictionary<string,string>(){ 
+				Image = new Dictionary<string,string>(){ 
 					{ "medium", "https://static.tvmaze.com/uploads/images/medium_portrait/0/6.jpg" },
 					{ "original", "https://static.tvmaze.com/uploads/images/original_untouched/0/6.jpg" }
 				}
 			},
 
-			new Title( name: "Person of Interest", type: "Scripted", language:  "English" ){
+			new Title( name: "Person of Interest", type: "Scripted", language:  "English", premiered: DateOnly.Parse("2013-06-24") ){
 				ID = 2, 
 				Genres = new string[]{ "Action", "Science-Fiction", "Crime" },
-				Images = new Dictionary<string,string>(){ 
+				Image = new Dictionary<string,string>(){ 
 					{ "medium", "https://static.tvmaze.com/uploads/images/medium_portrait/0/6.jpg" },
 					{ "original", "https://static.tvmaze.com/uploads/images/original_untouched/0/6.jpg" }
 				}
 			},
 
-			new Title( name: "Bitten", type: "Scripted", language:  "English" ){
+			new Title( name: "Bitten", type: "Scripted", language:  "English", premiered: DateOnly.Parse("2014-01-11") ){
 				ID = 3, 
 				Genres = new string[]{ "Drama", "Horror", "Romance" },
-				Images = new Dictionary<string,string>(){ 
+				Image = new Dictionary<string,string>(){ 
 					{ "medium", "https://static.tvmaze.com/uploads/images/medium_portrait/0/6.jpg" },
 					{ "original", "https://static.tvmaze.com/uploads/images/original_untouched/0/6.jpg" }
 				}

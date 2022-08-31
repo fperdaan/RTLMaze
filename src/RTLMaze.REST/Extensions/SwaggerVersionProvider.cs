@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace RTLMaze.REST.Startup;
+namespace RTLMaze.REST.Extensions;
 
 public class SwaggerVersionProvider : IConfigureNamedOptions<SwaggerGenOptions>
 {
