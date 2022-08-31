@@ -25,7 +25,7 @@ public partial class JsonStreamProcessor<T> : IStreamProcessor<T> where T : clas
 
 	# endregion
 
-	public virtual T? Process( Stream input )
+	public virtual T Process( Stream input )
 	{
 		T? result;
 
@@ -42,8 +42,12 @@ public partial class JsonStreamProcessor<T> : IStreamProcessor<T> where T : clas
 			throw new JsonFormatException("The supplied stream does not match the expected json format", e);
 		}
 
+
+		if( result == null )
+			throw new JsonFormatException("The serialization resolved in an empty result");
+
 		return result;
 	}
 
-	public T? Process( ISource input ) => Process( input.GetSource() );
+	public T Process( ISource input ) => Process( input.GetSource() );
 }

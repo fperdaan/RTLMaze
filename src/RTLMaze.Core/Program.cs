@@ -11,24 +11,26 @@ var jsonOptions = new JsonSerializerOptions {
 	WriteIndented = true,
 	Converters = { 
 		new DateOnlySerializer(), 
-		new JsonStringEnumConverter(),
-		new CountrySerializer()
+		new JsonStringEnumConverter()
 	}	
 };
 
 
-// var timestamp = new DateTimeOffset( DateTime.UtcNow ).AddDays( -7 ).ToUnixTimeSeconds();
 
-// var source = new FileStream( "Local/shows.json", FileMode.Open );
+var source = new FileStream( "Local/shows.json", FileMode.Open );
 
-// // var source = new HttpSource()
-// // 				.FromUrl("https://api.tvmaze.com/updates/shows")
-// // 	 			.SetMaxRequestAttempts( 10 )
-// //				.GetSource();
+var result = new JsonStreamProcessor<List<Title>>()
+				.Process( source );
+
+Console.WriteLine( result.Count() );
+
+// var source = new HttpSource()
+// 				.FromUrl("https://api.tvmaze.com/updates/shows");
 
 // var result = new JsonStreamProcessor<Dictionary<string, int>>()
 // 				.Process( source );
 
+// var timestamp = new DateTimeOffset( DateTime.UtcNow ).AddDays( -7 ).ToUnixTimeSeconds();
 // var updated = result
 // 				.Where( kv => kv.Value >= timestamp )
 // 				.Select( kv => Int32.Parse( kv.Key ) )
@@ -36,16 +38,16 @@ var jsonOptions = new JsonSerializerOptions {
 
 // Console.WriteLine( updated.Count() );
 
-var source = new FileStream( "Local/person.json", FileMode.Open );
+// var source = new FileStream( "Local/person.json", FileMode.Open );
 
-// var source = new HttpSource()
-// 				.FromUrl("https://api.tvmaze.com/updates/shows/1?embed=cast")
-// 	 			.SetMaxRequestAttempts( 10 )
-//				.GetSource();
+// // var source = new HttpSource()
+// // 				.FromUrl("https://api.tvmaze.com/updates/shows/1?embed=cast")
+// // 	 			.SetMaxRequestAttempts( 10 )
+// //				.GetSource();
 
 
-var result = new JsonStreamProcessor<Person>()
-				.SetJsonOptions( jsonOptions )
-				.Process( source );
+// var result = new JsonStreamProcessor<Country>()
+// 				.SetJsonOptions( jsonOptions )
+// 				.Process( source );
 
-Console.WriteLine( JsonSerializer.Serialize( result, jsonOptions ) );
+// Console.WriteLine( JsonSerializer.Serialize( result, jsonOptions ) );
