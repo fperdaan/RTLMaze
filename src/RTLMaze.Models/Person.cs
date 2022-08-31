@@ -7,5 +7,11 @@ public class Person : StorableEntity, IPerson
 	public DateOnly DeathDay { get; set; }
 	public Gender Gender { get; set; }
 	public ICountry Country { get; set; }
-	public Dictionary<string, string> Images { get; set; } = new Dictionary<string, string>();
+	public IDictionary<string, string> Images { get; set; } = new Dictionary<string, string>();
+
+	public Person( string name, ICountry country )
+	{
+		Name = name;
+		Country = country;
+	}
 }

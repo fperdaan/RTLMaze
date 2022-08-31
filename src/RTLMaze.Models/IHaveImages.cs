@@ -2,5 +2,5 @@ namespace RTLMaze.Models;
 
 public interface IHaveImages
 {
-	public Dictionary<string, string> Images { get; set; }
+	public IDictionary<string, string> Images { get; set; }
 }
