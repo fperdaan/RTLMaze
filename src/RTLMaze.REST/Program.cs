@@ -1,4 +1,7 @@
-using System.Web.Http.Cors;
+using RTLMaze.REST.Startup;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder( args );
 
@@ -6,13 +9,31 @@ var builder = WebApplication.CreateBuilder( args );
 
 # region Start configuration
 
-builder.Services.AddControllers();
+var mvcBuilder = builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 // -- Configure swagger
-builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<SwaggerVersionProvider>();
+builder.Services.AddSwaggerGen( c => 
+{
+	c.DocumentFilter<SwaggerLatestSchemeFilter>(); 
+});
+
+// -- Configure versioning api
+builder.Services.AddApiVersioning( options =>
+{
+	options.DefaultApiVersion = new ApiVersion( 1, 0 );
+	options.AssumeDefaultVersionWhenUnspecified = true;
+	options.ReportApiVersions = true;
+});
+
+builder.Services.AddVersionedApiExplorer( setup =>
+{
+	setup.GroupNameFormat = "'v'VVV";
+	setup.SubstituteApiVersionInUrl = true;
+});
 
 // -- Configure cors ( enable all for now )
 builder.Services.AddCors( c => c.AddDefaultPolicy( b => 
@@ -28,16 +49,20 @@ builder.Services.AddCors( c => c.AddDefaultPolicy( b =>
 
 var app = builder.Build();
 
-
-// Configure cors 
-// -- Whitelist all for now ( by default )
-var cors = new EnableCorsAttribute( "*", "*", "*" );
-
 // Configure the HTTP request pipeline.
 
 // -- Add swagger
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI( o => 
+{
+	var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+	// Build a swagger endpoint for each discovered API version  
+	foreach ( var description in apiVersionDescriptionProvider.ApiVersionDescriptions )  
+	{  
+		o.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant() );  
+	} 
+});
 
 // -- Enable cors
 app.UseCors();
