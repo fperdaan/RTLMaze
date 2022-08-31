@@ -13,6 +13,8 @@ var mvcBuilder = builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+// use lowercase urls
+builder.Services.AddRouting( options => options.LowercaseUrls = true );
 
 // -- Configure swagger
 builder.Services.ConfigureOptions<SwaggerVersionProvider>();
