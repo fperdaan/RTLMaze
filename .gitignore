@@ -2,3 +2,7 @@ bin
 obj
 .vs
 *.code-workspace
+*.db
+
+# Ignore migrations folder while testing
+**/Migrations
