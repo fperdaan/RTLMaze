@@ -2,6 +2,7 @@ using RTLMaze.REST.Startup;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder( args );
 
@@ -44,6 +45,17 @@ builder.Services.AddCors( c => c.AddDefaultPolicy( b =>
 	 .AllowAnyMethod()
 	 .AllowAnyHeader();
 } ) );
+
+// Set database context
+builder.Services
+			.AddDbContext<RTLMaze.DAL.RTLMazeStorageContext>( 
+				c => c.UseSqlite( 
+					builder.Configuration.GetConnectionString("DefaultConnection"), 
+					b => b.MigrationsAssembly("RTLMaze.REST") 
+				) );
+
+// -- Configure solutions
+RTLMaze.DAL.Configure.ConfigureServices( builder.Services );
 
 # endregion
 

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RTLMaze.DAL;
+using RTLMaze.Models;
 using RTLMaze.REST.Models;
 
 namespace RTLMaze.REST.Controllers.V1;
@@ -12,13 +15,6 @@ public class WeatherForecastController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
-    {
-        _logger = logger;
-    }
-
     [HttpGet, Route("")]
     public IEnumerable<WeatherForecast> Get()
     {
@@ -29,5 +25,11 @@ public class WeatherForecastController : ControllerBase
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
         .ToArray();
+    }
+
+	[HttpGet, Route("test")]
+    public IAsyncEnumerable<Title> Test( [FromServices] IRepository<Title> repo )
+    {
+        return repo.Query().AsAsyncEnumerable();
     }
 }
