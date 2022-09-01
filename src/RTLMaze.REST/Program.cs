@@ -24,6 +24,7 @@ mvcBuilder.AddJsonOptions( options =>
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
 	options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
+	options.JsonSerializerOptions.Converters.Add( new DateOnlyNullableSerializer() );
 	//options.JsonSerializerOptions.Converters.Add( new JsonStringEnumConverter() );
 });
 

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Nodes;
 using RTLMaze.Core;
 using RTLMaze.Core.Scraper;
+using RTLMaze.Core.Scraper.Serializer;
 using RTLMaze.Models;
 
 // -- Temp used for reading data
@@ -10,7 +10,15 @@ var jsonOptions = new JsonSerializerOptions {
 	PropertyNameCaseInsensitive = true,
 	WriteIndented = true,
 	Converters = { 
-		new DateOnlySerializer()
+		new DateOnlySerializer(),
+		new DateOnlyNullableSerializer(), 
+
+		new CastDeserializer(),
+		new TitleDeserializer(),
+
+		new InterfaceDeserializer<ICast, Cast>(),
+		new InterfaceDeserializer<IPerson, Person>(),
+		new InterfaceDeserializer<ITitle, Title>()
 	}	
 };
 
@@ -18,12 +26,17 @@ var jsonOptions = new JsonSerializerOptions {
 
 var source = new FileStream( "Local/update-shows.json", FileMode.Open );
 
-// var result = new JsonStreamProcessor<List<Title>>()
+// var result = new JsonStreamProcessor<Person>()
 // 				.SetJsonOptions( jsonOptions )
 // 				.Process( source );
 
+	
+
+// Console.WriteLine( JsonSerializer.Serialize( result, jsonOptions ) );
+
 // var source = new HttpSource()
 // 				.FromUrl("https://api.tvmaze.com/updates/shows");
+
 
 var result = new JsonStreamProcessor<Dictionary<string, int>>()
 				.SetJsonOptions( jsonOptions )
@@ -35,21 +48,30 @@ var updated = result
 				.Select( kv => Int32.Parse( kv.Key ) )
 				.ToList();
 
-Console.WriteLine( updated.Count() );
-
 foreach( int id in updated )
 {
 	var url = $"https://api.tvmaze.com/shows/{id}?embed=cast";
 
 	var source2 = new FileStream( "Local/show.json", FileMode.Open );
 
-	var result2 = new JsonStreamProcessor<Title>()
+	var result2 = new JsonStreamProcessor<ITitle>()
 				.SetJsonOptions( jsonOptions )
 				.Process( source2 );
 
+
+
 	Console.WriteLine( JsonSerializer.Serialize( result2, jsonOptions ) );
+
 	break;
 }
+
+// public class Test 
+// {
+// 	public int ID { get; set; }
+// 	public string Name { get; set; }
+
+// 	public DateTime Birthday { get; set; }
+// }
 
 // var source = new FileStream( "Local/person.json", FileMode.Open );
 
