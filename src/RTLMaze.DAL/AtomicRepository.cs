@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using RTLMaze.Models;
 using System.Linq.Expressions;
 
 namespace RTLMaze.DAL;
 
-public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> where T : class
+public partial class AtomicRepository<T> : IRepository<T> where T : StorableEntity 
 {
 	private RTLMazeStorageContext _context;
 
@@ -26,7 +27,7 @@ public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> wh
 		await _context.SaveChangesAsync();
 	}
 
-	public virtual async Task Delete( PKeyType id )
+	public virtual async Task Delete( int id )
 	{
 		T? obj = await GetById( id );
 
@@ -55,7 +56,7 @@ public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> wh
         return await _context.Set<T>().ToListAsync();
 	}
 
-	public virtual async Task<T?> GetById( PKeyType id )
+	public virtual async Task<T?> GetById( int id )
 	{
 		return await _context.Set<T>().FindAsync( id );
 	}
@@ -87,9 +88,3 @@ public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> wh
 		await _context.SaveChangesAsync();
 	}
 }
-
-// -- Quick interface
-public class AtomicRepository<T> : AtomicRepository<T, int>, IRepository<T> where T : class
-{
-	public AtomicRepository( RTLMazeStorageContext context ) : base( context ) {}
-} 

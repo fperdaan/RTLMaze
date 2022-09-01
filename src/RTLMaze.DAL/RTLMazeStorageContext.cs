@@ -11,6 +11,7 @@ public partial class RTLMazeStorageContext : DbContext
 	public virtual DbSet<Person>? Person { get; set; }
 	public virtual DbSet<Title>? Title { get; set; }
 	public virtual DbSet<Cast>? Cast { get; set; }
+	public virtual DbSet<Job>? Job { get; set; }
 
 	public RTLMazeStorageContext( DbContextOptions<RTLMazeStorageContext> options ) : base( options ) {}
 

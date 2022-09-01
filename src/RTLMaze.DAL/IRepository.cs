@@ -1,23 +1,17 @@
-using System.Linq.Expressions;
+using RTLMaze.Models;
 
 namespace RTLMaze.DAL;
 
-public interface IRepository<T, PKeyType>
+public interface IRepository<T>
 {
 	public Task Add( T item );
 	public Task AddAll( IEnumerable<T> items );
-	public Task Delete( PKeyType id );	
+	public Task Delete( int id );	
 	public Task DeleteAll( IEnumerable<T> items );
 	public Task<IEnumerable<T>> GetAll();
-	public Task<T?> GetById( PKeyType id );
+	public Task<T?> GetById( int id );
 	public IQueryable<T> Query();
 	public Task Save( T item );
 	public Task SaveAll( IEnumerable<T> items );
 	public Task SaveAllLazy( IEnumerable<T> items );
-}
-
-// Quick interface
-public interface IRepository<T> : IRepository<T, int> 
-{
-
 }

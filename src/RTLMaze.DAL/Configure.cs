@@ -10,6 +10,7 @@ static public class Configure
 		services
 			.AddScoped<IRepository<Title>, AtomicRepository<Title>>()
 			.AddScoped<IRepository<Person>, AtomicRepository<Person>>()
-		 	.AddScoped<IRepository<Cast>, AtomicRepository<Cast>>();
+		 	.AddScoped<IRepository<Cast>, AtomicRepository<Cast>>()
+		 	.AddScoped<IRepository<Job>, AtomicRepository<Job>>();
 	}
 }

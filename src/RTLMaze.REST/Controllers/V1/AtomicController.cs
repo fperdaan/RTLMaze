@@ -41,10 +41,18 @@ abstract public partial class AtomicController<T, TViewModel> : ControllerBase w
     public virtual ResponsePaged<TViewModel> List( [FromQuery] Pagination pagination )
     {
 		return ResponsePaged<TViewModel>.ToPagedResponse(
-			source: _CastQuery( this._repo.Query().OrderBy( e => e.ID ) ),
+			source: _CastQuery( this._repo.Query().OrderByDescending( e => e.ID ) ),
 			request: Request,
 			top: pagination.Top, 
 			skip: pagination.Skip
 		);
     }
+}
+
+abstract public partial class AtomicController<T> : AtomicController<T, T> where T : IStorableEntity
+{
+	protected AtomicController( IRepository<T> repo ) : base(repo ) { }
+
+	protected override T _CastObject( T obj ) => obj;
+	protected override IQueryable<T> _CastQuery( IQueryable<T> query ) => query;
 }
