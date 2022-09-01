@@ -16,7 +16,7 @@ namespace RTLMaze.REST.Controllers.V1;
 public partial class ManagementController : Controller
 {
 	[HttpGet, Route("content-update")]
-	public IActionResult ContentUpdate( [FromServices] IMazeScraperService scraper )
+	public async Task<IActionResult> ContentUpdate( [FromServices] IMazeScraperService scraper )
 	{	
 		//if( scraper.IsAScraperRunning() )
 		//	return new Response<Job>( scraper.GetLastRunJob()! ).Convert();
@@ -25,7 +25,7 @@ public partial class ManagementController : Controller
 		scraper.Since( scraper.GetLastRunTime() );
 		
 		// Start script and bugger off
-		_ContentUpdateAsync( scraper ).ConfigureAwait( false );
+		await _ContentUpdateAsync( scraper );
 
 
 		return new Response<FluentJob>( scraper.Job ).Convert();
