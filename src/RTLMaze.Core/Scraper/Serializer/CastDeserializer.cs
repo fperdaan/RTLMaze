@@ -45,7 +45,12 @@ public partial class CastDeserializer : OverloadJsonConverter<Cast>
 		if( !document.RootElement.TryGetProperty( "character", out jsonElement ) )
 			return null;
 
-		return jsonElement.Deserialize<Cast>( _CopyOptionsAndRemove( options ) );
+		Cast? item = jsonElement.Deserialize<Cast>( _CopyOptionsAndRemove( options ) );
+
+		if( item != null )
+			item.ID = default( int );
+
+		return item;
 	}
 
 }

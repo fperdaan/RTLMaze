@@ -2,7 +2,7 @@ namespace RTLMaze.DAL;
 
 public interface IRepositoryImporter<T>
 {
-	public void Import( T item );
-	public void Import( IEnumerable<T> items );
-	public void Process();
+	public Task Import( T item );
+	public Task Import( IEnumerable<T> items );
+	public Task Process();
 }

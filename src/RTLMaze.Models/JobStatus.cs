@@ -9,5 +9,6 @@ public enum JobStatus
 	Queueued,	
 	Running,
 	Failed,
+	Aborted,
 	Processed
 }

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RTLMaze.Core.Scraper;
 using RTLMaze.Core.Scraper.Serializer;
+using RTLMaze.Core.Services;
 using RTLMaze.Models;
 
 namespace RTLMaze.Core;
@@ -21,7 +22,11 @@ static public class Configure
 			options.JsonSerializerOptions.Converters.Add( new TitleDeserializer() );
 		});
 
-		// -- Register our DI
+		// -- Register our scraper configuration
 		services.AddTransient( typeof( IJsonStreamProcessor<> ), typeof( JsonStreamProcessor<> ) );
+
+		// -- Register other services
+		services.AddScoped<IJobService, JobService>();
+		services.AddScoped<IMazeScraperService, MazeScraperService>();
 	}
 }

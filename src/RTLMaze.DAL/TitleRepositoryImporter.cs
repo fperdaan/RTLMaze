@@ -18,20 +18,16 @@ public partial class TitleRepositoryImporter : IRepositoryImporter<Title>
 
 	protected virtual TEntity? _updateOrInsert<TEntity>( TEntity item ) where TEntity : class, IStorableEntity
 	{
-		TEntity? existingItem = _context.Set<TEntity>().Find( item.ID );
+		TEntity? existingItem = item.ID == default( int ) ? null : _context.Set<TEntity>().Find( item.ID );
 
 		if( existingItem != null )
 		{
 			_context.Entry( existingItem ).State = EntityState.Modified;
 			_context.Entry( existingItem ).CurrentValues.SetValues( item );
-
-			Console.WriteLine( $"Updated: {existingItem}" );
 		}
 		else 
 		{
 			_context.Entry( item ).State = EntityState.Added;
-
-			Console.WriteLine( $"Added: {item}" );
 		}
 
 		return existingItem;
@@ -45,35 +41,36 @@ public partial class TitleRepositoryImporter : IRepositoryImporter<Title>
 
 	# endregion
 
-	public virtual void Import( Title title )
+	public virtual Task Import( Title title )
 	{
 		Title? exists = _updateOrInsert<Title>( title );
 
-		Console.WriteLine( $"exists: {exists}" );
-
 		// -- mark existing children as deleted; gets overwritten by update loop later (if still persist)
 		if( exists != null )
+		{
 			_markDeleted( exists.Cast );
+		}
 
+		// -- Update child references
 		foreach( Cast cast in title.Cast )
 		{
 			_updateOrInsert<Person>( cast.Person );
 			_updateOrInsert<Cast>( cast );
 		}
+	
+		return Task.CompletedTask;
 	}
 
-	public virtual void Import( IEnumerable<Title> items )
+	public virtual Task Import( IEnumerable<Title> items )
 	{
 		foreach( Title item in items )
 			Import( item );
+
+		return Task.CompletedTask;
 	}
 
-	public virtual void Process()
+	public virtual Task Process()
 	{
-		Console.WriteLine("Trying to process data" );
-
-		_context.SaveChanges();
-
-		Console.WriteLine("Processed data" );
+		return _context.SaveChangesAsync();
 	}
 }

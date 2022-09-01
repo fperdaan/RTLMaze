@@ -1,4 +1,5 @@
 namespace RTLMaze.REST.Models;
+
 using Microsoft.AspNetCore.Http.Extensions;
 
 static public class UriBuilderPagination 

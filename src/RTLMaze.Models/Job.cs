@@ -14,7 +14,10 @@ public class Job : StorableEntity
 		Status = JobStatus.New;
 	}
 
-	# region Fluid interface
+
+	public virtual bool Is( JobStatus status ) => Status == status;
+
+	# region Fluid interface ( proxy for start/end )
 
 	public Job End()
 	{
@@ -23,16 +26,7 @@ public class Job : StorableEntity
 		return this;
 	}
 
-	public Job End( JobStatus status ) => SetStatus( status ).End();
-
-	public Job SetStatus( JobStatus status )
-	{
-		Status = status;
-
-		return this;
-	}
-
-	public Job Start()
+	public virtual Job Start()
 	{
 		DateStart = DateTime.UtcNow;
 

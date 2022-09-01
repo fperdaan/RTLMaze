@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 using RTLMaze.Core;
-using RTLMaze.Core.Scraper;
 using RTLMaze.DAL;
 using RTLMaze.Models;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Options;
+using RTLMaze.Core.Services;
+using RTLMaze.Core.Models;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace RTLMaze.REST.Controllers.V1;
 
@@ -15,38 +16,36 @@ namespace RTLMaze.REST.Controllers.V1;
 public partial class ManagementController : Controller
 {
 	[HttpGet, Route("content-update")]
-	public async Task<IActionResult> ContentUpdate( [FromServices] IRepositoryImporter<Title> repo, [FromServices] IRepository<Job> jobRepo, [FromServices] IOptions<ScraperOptions> options )
+	public IActionResult ContentUpdate( [FromServices] IMazeScraperService scraper )
 	{	
-		// var result = new Title("Change this title"){
-		// 	ID = 25
-		// };
+		//if( scraper.IsAScraperRunning() )
+		//	return new Response<Job>( scraper.GetLastRunJob()! ).Convert();
 
-		// result.Cast.Add(new Cast {
-		// 	Name = "Foo",
-		// 	Title = result,
-		// 	Person = new Person("Bar"){
-		// 		ID = 15
-		// 	}
-		// });
-
-		// repo.Import( result );
-		// repo.Process();
-
-		var titleProcessor = new JsonStreamProcessor<Title>( options );
-		var url = $"https://api.tvmaze.com/shows/41?embed=cast";
-			var source = new HttpSource( url );
-
-			var title = titleProcessor.Process( new HttpSource( url ) );
+		// Configure scraper
+		scraper.Since( scraper.GetLastRunTime() );
 		
-			repo.Import( title );
-			repo.Process();
-
-		Console.WriteLine("Continue request" );
+		// Start script and bugger off
+		_ContentUpdateAsync( scraper ).ConfigureAwait( false );
 
 
-		return new Response<Title>( title ).Convert();
+		return new Response<FluentJob>( scraper.Job ).Convert();
+	}
 
-		/*var result = new JsonStreamProcessor<Dictionary<string, int>>()
+	protected async Task _ContentUpdateAsync( IMazeScraperService scraper )
+	{
+		Console.WriteLine("Start job");
+		scraper.Start();
+
+		await Task.Delay(1000);
+
+		// DbContext gets disposed in the meantime, this is not the way
+		// Probabilly check ( https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-6.0&tabs=visual-studio )
+
+		scraper.Finish();
+		Console.WriteLine("Finish job");
+/*
+
+		var result = new JsonStreamProcessor<Dictionary<string, int>>()
 						.SetJsonOptions( options.Value.JsonSerializerOptions )
 						.Process( new HttpSource( "https://api.tvmaze.com/updates/shows" ) );
 
@@ -72,19 +71,12 @@ public partial class ManagementController : Controller
 		
 			repo.Import( title );
 
-			if( count++ >= 2 )
+			if( count++ >= 10 )
 			{
-				repo.Process();
-				return new Response<object>( title ).Convert();
+				break; 
 			}
 		}
-
-		// Job job = new Job("content-update");
-
-		// job.Start();
-
-		// jobRepo.Save( job );
-
-		return Ok();*/
+				
+		repo.Process();*/
 	}
 }
