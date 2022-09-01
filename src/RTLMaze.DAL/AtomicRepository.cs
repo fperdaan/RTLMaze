@@ -74,17 +74,4 @@ public partial class AtomicRepository<T> : IRepository<T> where T : StorableEnti
 
 		await _context.SaveChangesAsync();
 	}
-
-	public virtual async Task SaveAllLazy( IEnumerable<T> items )
-	{
-		foreach( T item in items )
-		{
-			if( _context.Set<T>().Contains( item ) )	
-				_context.Update( item );
-			else 
-				_context.Add( item );
-		}
-
-		await _context.SaveChangesAsync();
-	}
 }

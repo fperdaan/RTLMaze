@@ -15,25 +15,76 @@ namespace RTLMaze.REST.Controllers.V1;
 public partial class ManagementController : Controller
 {
 	[HttpGet, Route("content-update")]
-	public IActionResult ContentUpdate( [FromServices] IRepository<Title> repo, [FromServices] IOptions<ScraperOptions> options )
+	public async Task<IActionResult> ContentUpdate( [FromServices] IRepositoryImporter<Title> repo, [FromServices] IRepository<Job> jobRepo, [FromServices] IOptions<ScraperOptions> options )
 	{	
-		// var result = new JsonStreamProcessor<List<Title>>()
-		// 				.SetJsonOptions( options.Value )
-		// 				.Process( new HttpSource( "https://api.tvmaze.com/shows?page=2" ) );
+		// var result = new Title("Change this title"){
+		// 	ID = 25
+		// };
 
-		// repo.SaveAllLazy( result );
+		// result.Cast.Add(new Cast {
+		// 	Name = "Foo",
+		// 	Title = result,
+		// 	Person = new Person("Bar"){
+		// 		ID = 15
+		// 	}
+		// });
 
-		var id = 1;
+		// repo.Import( result );
+		// repo.Process();
 
-		var url = $"https://api.tvmaze.com/shows/{id}?embed=cast";
-		var source = new HttpSource( url );
+		var titleProcessor = new JsonStreamProcessor<Title>( options );
+		var url = $"https://api.tvmaze.com/shows/41?embed=cast";
+			var source = new HttpSource( url );
 
-		var result = new JsonStreamProcessor<Title>()
-					.SetJsonOptions( options.Value.JsonSerializerOptions )
-					.Process( source );
+			var title = titleProcessor.Process( new HttpSource( url ) );
+		
+			repo.Import( title );
+			repo.Process();
 
-		repo.Add( result );
+		Console.WriteLine("Continue request" );
 
-		return new Response<Title>( result ).Convert();
+
+		return new Response<Title>( title ).Convert();
+
+		/*var result = new JsonStreamProcessor<Dictionary<string, int>>()
+						.SetJsonOptions( options.Value.JsonSerializerOptions )
+						.Process( new HttpSource( "https://api.tvmaze.com/updates/shows" ) );
+
+		
+		var timestamp = new DateTimeOffset( DateTime.UtcNow ).AddDays( -7 ).ToUnixTimeSeconds();
+
+		var updated = result
+						.Where( kv => kv.Value >= timestamp )
+						.Select( kv => Int32.Parse( kv.Key ) )
+						.ToList();
+
+
+		var titleProcessor = new JsonStreamProcessor<Title>( options );
+
+		var count = 0;
+
+		foreach( int titleId in updated )
+		{
+			var url = $"https://api.tvmaze.com/shows/{titleId}?embed=cast";
+			var source = new HttpSource( url );
+
+			var title = titleProcessor.Process( new HttpSource( url ) );
+		
+			repo.Import( title );
+
+			if( count++ >= 2 )
+			{
+				repo.Process();
+				return new Response<object>( title ).Convert();
+			}
+		}
+
+		// Job job = new Job("content-update");
+
+		// job.Start();
+
+		// jobRepo.Save( job );
+
+		return Ok();*/
 	}
 }

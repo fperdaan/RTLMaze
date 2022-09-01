@@ -1,5 +1,3 @@
-using RTLMaze.Models;
-
 namespace RTLMaze.DAL;
 
 public interface IRepository<T>
@@ -13,5 +11,4 @@ public interface IRepository<T>
 	public IQueryable<T> Query();
 	public Task Save( T item );
 	public Task SaveAll( IEnumerable<T> items );
-	public Task SaveAllLazy( IEnumerable<T> items );
 }

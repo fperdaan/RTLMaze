@@ -12,5 +12,8 @@ static public class Configure
 			.AddScoped<IRepository<Person>, AtomicRepository<Person>>()
 		 	.AddScoped<IRepository<Cast>, AtomicRepository<Cast>>()
 		 	.AddScoped<IRepository<Job>, AtomicRepository<Job>>();
+
+		services
+			.AddScoped<IRepositoryImporter<Title>, TitleRepositoryImporter>();
 	}
 }
