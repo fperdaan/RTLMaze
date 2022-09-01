@@ -38,6 +38,13 @@ public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> wh
 		}
 	}
 
+	public virtual async Task DeleteAll( IEnumerable<T> items )
+	{
+		_context.RemoveRange( items );
+
+		await _context.SaveChangesAsync();
+	}
+
 	public IQueryable<T> Query()
 	{
 		return _context.Set<T>().AsNoTracking();
@@ -68,6 +75,19 @@ public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> wh
 	public virtual async Task SaveAll( IEnumerable<T> items )
 	{
 		_context.UpdateRange( items );
+
+		await _context.SaveChangesAsync();
+	}
+
+	public virtual async Task SaveAllLazy( IEnumerable<T> items )
+	{
+		foreach( T item in items )
+		{
+			if( _context.Set<T>().Contains( item ) )	
+				_context.Update( item );
+			else 
+				_context.Add( item );
+		}
 
 		await _context.SaveChangesAsync();
 	}

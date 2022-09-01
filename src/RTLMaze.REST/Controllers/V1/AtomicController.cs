@@ -16,7 +16,7 @@ abstract public partial class AtomicController<T> : ControllerBase where T : ISt
 		this._repo = repo;
 	}
 
-	 [HttpGet, Route("$count")]
+	[HttpGet, Route("$count")]
     public virtual int Count()
     {	
 		return this._repo.Query().Count();

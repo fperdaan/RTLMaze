@@ -1,24 +1,35 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace RTLMaze.Core.Scraper;
 
-public partial class JsonStreamProcessor<T> : IStreamProcessor<T> where T : class
+public partial class JsonStreamProcessor<T> : IJsonStreamProcessor<T> where T : class
 {
-	private JsonSerializerOptions JsonOptions { get; set; } = new JsonSerializerOptions();
+	public JsonSerializerOptions _jsonOptions { get; set; } = new JsonSerializerOptions();
 	
+	public JsonStreamProcessor() { }
+	
+	/// <summary>
+	/// DI Interface, used to inherit the options from the DI configuration
+	/// </summary>
+	public JsonStreamProcessor( IOptions<ScraperOptions> options ) 
+	{
+		_jsonOptions = options.Value.JsonSerializerOptions;
+	} 
+
 	# region Fluent interface
 
-	public virtual JsonStreamProcessor<T> SetJsonOptions( JsonSerializerOptions options )
+	public virtual IJsonStreamProcessor<T> SetJsonOptions( JsonSerializerOptions options )
 	{
-		JsonOptions = options;
+		_jsonOptions = options;
 
 		return this;
 	}
 
-	public virtual JsonStreamProcessor<T> AddConverter( JsonConverter<T> converter )
+	public virtual IJsonStreamProcessor<T> AddConverter( JsonConverter<T> converter )
 	{
-		JsonOptions.Converters.Add( converter );
+		_jsonOptions.Converters.Add( converter );
 
 		return this;
 	}
@@ -34,7 +45,7 @@ public partial class JsonStreamProcessor<T> : IStreamProcessor<T> where T : clas
 			using ( StreamReader reader = new StreamReader( input ) )
 			{
 				string json = reader.ReadToEnd();
-				result = JsonSerializer.Deserialize<T>( json, JsonOptions );
+				result = JsonSerializer.Deserialize<T>( json, _jsonOptions );
 			}
 		}
 		catch( Exception e )

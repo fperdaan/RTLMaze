@@ -24,7 +24,7 @@ mvcBuilder.AddJsonOptions( options =>
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
 	options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
-	options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter() );
+	//options.JsonSerializerOptions.Converters.Add( new JsonStringEnumConverter() );
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -81,6 +81,7 @@ builder.Services
 				) );
 
 // -- Configure solutions
+RTLMaze.Core.Configure.ConfigureServices( builder.Services );
 RTLMaze.DAL.Configure.ConfigureServices( builder.Services );
 
 # endregion

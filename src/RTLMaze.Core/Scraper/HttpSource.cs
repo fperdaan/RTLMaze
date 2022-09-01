@@ -9,6 +9,11 @@ public partial class HttpSource : IHttpSource
 	private string? _source;
 	protected ICollection<HttpStatusCode> _retryStatusWhitelist = new List<HttpStatusCode> { HttpStatusCode.TooManyRequests };
 
+	public HttpSource( string source = "" )
+	{
+		_source = source;
+	}
+
 	# region Fluid interface
 	public virtual IHttpSource RetryOnStatuscode( HttpStatusCode code ) 
 	{
