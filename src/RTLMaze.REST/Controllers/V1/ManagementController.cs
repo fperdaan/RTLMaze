@@ -15,14 +15,25 @@ namespace RTLMaze.REST.Controllers.V1;
 public partial class ManagementController : Controller
 {
 	[HttpGet, Route("content-update")]
-	public IActionResult ContentUpdate( [FromServices] IRepository<Title> repo, [FromServices] IOptions<JsonSerializerOptions> options )
+	public IActionResult ContentUpdate( [FromServices] IRepository<Title> repo, [FromServices] IOptions<ScraperOptions> options )
 	{	
-		var result = new JsonStreamProcessor<List<Title>>()
-						.SetJsonOptions( options.Value )
-						.Process( new HttpSource( "https://api.tvmaze.com/shows?page=2" ) );
+		// var result = new JsonStreamProcessor<List<Title>>()
+		// 				.SetJsonOptions( options.Value )
+		// 				.Process( new HttpSource( "https://api.tvmaze.com/shows?page=2" ) );
 
-		repo.SaveAllLazy( result );
+		// repo.SaveAllLazy( result );
 
-		return new Response<int>( result.Count() ).Convert();
+		var id = 1;
+
+		var url = $"https://api.tvmaze.com/shows/{id}?embed=cast";
+		var source = new HttpSource( url );
+
+		var result = new JsonStreamProcessor<Title>()
+					.SetJsonOptions( options.Value.JsonSerializerOptions )
+					.Process( source );
+
+		repo.Add( result );
+
+		return new Response<Title>( result ).Convert();
 	}
 }

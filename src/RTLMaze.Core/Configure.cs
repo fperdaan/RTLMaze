@@ -19,10 +19,6 @@ static public class Configure
 
 			options.JsonSerializerOptions.Converters.Add( new CastDeserializer() );
 			options.JsonSerializerOptions.Converters.Add( new TitleDeserializer() );
-
-			options.JsonSerializerOptions.Converters.Add( new InterfaceDeserializer<ICast, Cast>() );
-			options.JsonSerializerOptions.Converters.Add( new InterfaceDeserializer<IPerson, Person>() );
-			options.JsonSerializerOptions.Converters.Add( new InterfaceDeserializer<ITitle, Title>() );
 		});
 
 		// -- Register our DI

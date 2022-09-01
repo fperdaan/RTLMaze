@@ -3,22 +3,22 @@ using RTLMaze.Models;
 
 namespace RTLMaze.Core.Scraper.Serializer;
 
-public partial class CastDeserializer : OverloadJsonConverter<ICast>
+public partial class CastDeserializer : OverloadJsonConverter<Cast>
 {
 	// Fallback on default deserialization method
-	public override ICast? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options )
+	public override Cast? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options )
 	{
 		JsonDocument? document;
 
 		if( !JsonDocument.TryParseValue( ref reader, out document ) )
 			return null;
 
-		IPerson? person = _ReadPerson( document, options );
+		Person? person = _ReadPerson( document, options );
 
 		if( person == null )
 			return null;
 
-		ICast? cast = _ReadCastBase( document, options );
+		Cast? cast = _ReadCastBase( document, options );
 		
 		if( cast == null )
 			return null;
@@ -28,24 +28,24 @@ public partial class CastDeserializer : OverloadJsonConverter<ICast>
 		return cast;
 	}
 
-	protected virtual IPerson? _ReadPerson( JsonDocument document, JsonSerializerOptions options )
+	protected virtual Person? _ReadPerson( JsonDocument document, JsonSerializerOptions options )
 	{
 		JsonElement jsonElement;
 
 		if( !document.RootElement.TryGetProperty( "person", out jsonElement ) )
 			return null;
 
-		return jsonElement.Deserialize<IPerson>( options );
+		return jsonElement.Deserialize<Person>( options );
 	}
 
-	protected virtual ICast? _ReadCastBase( JsonDocument document, JsonSerializerOptions options )
+	protected virtual Cast? _ReadCastBase( JsonDocument document, JsonSerializerOptions options )
 	{
 		JsonElement jsonElement;
 
 		if( !document.RootElement.TryGetProperty( "character", out jsonElement ) )
 			return null;
 
-		return jsonElement.Deserialize<ICast>( _CopyOptionsAndRemove( options ) );
+		return jsonElement.Deserialize<Cast>( _CopyOptionsAndRemove( options ) );
 	}
 
 }

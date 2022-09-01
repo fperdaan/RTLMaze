@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 using RTLMaze.DAL.Conversion;
 using RTLMaze.Models;
 
@@ -10,12 +10,24 @@ public partial class RTLMazeStorageContext : DbContext
 	//public virtual DbSet<Cast>? Cast { get; set; }
 	public virtual DbSet<Person>? Person { get; set; }
 	public virtual DbSet<Title>? Title { get; set; }
+	public virtual DbSet<Cast>? Cast { get; set; }
 
 	public RTLMazeStorageContext( DbContextOptions<RTLMazeStorageContext> options ) : base( options ) {}
 
-	// protected override void OnModelCreating( ModelBuilder builder )
-	// {
-	// }
+	protected override void OnModelCreating( ModelBuilder modelBuilder )
+	{
+		modelBuilder.Entity<Title>( builder => 
+		{
+			// Disable ID auto increment
+			builder.Property( p => p.ID ).ValueGeneratedNever();
+		});
+
+		modelBuilder.Entity<Person>( builder => 
+		{
+			// Disable ID auto increment
+			builder.Property( p => p.ID ).ValueGeneratedNever();
+		});
+	}
 
 	protected override void ConfigureConventions( ModelConfigurationBuilder configurationBuilder )
 	{

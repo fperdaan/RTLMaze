@@ -47,17 +47,12 @@ public partial class AtomicRepository<T, PKeyType> : IRepository<T, PKeyType> wh
 
 	public IQueryable<T> Query()
 	{
-		return _context.Set<T>().AsNoTracking();
-	}
-
-	public virtual async Task<IEnumerable<T>> Get<T2>( Expression<Func<T, bool>> predicate )
-	{
-    	return await _context.Set<T>().AsNoTracking().Where( predicate ).ToListAsync();
+		return _context.Set<T>();
 	}
 
 	public virtual async Task<IEnumerable<T>> GetAll()
 	{
-        return await _context.Set<T>().AsNoTracking().ToListAsync();
+        return await _context.Set<T>().ToListAsync();
 	}
 
 	public virtual async Task<T?> GetById( PKeyType id )

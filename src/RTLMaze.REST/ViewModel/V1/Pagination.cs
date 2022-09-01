@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace RTLMaze.REST.ViewModel;
+namespace RTLMaze.REST.ViewModel.V1;
 
 public class Pagination
 {

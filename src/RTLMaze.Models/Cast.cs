@@ -1,15 +1,18 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace RTLMaze.Models;
 
-public partial class Cast : ICast
+public partial class Cast
 {
-	public IPerson Person { get; set; }
-	public ITitle Title { get; }
-	public string Name { get; set; }
+	[JsonIgnore]
+	public int ID { get; set; }
+	
+	[Required]
+	public virtual Person Person { get; set; } = null!;
 
-	public Cast( IPerson person, ITitle title, string name )
-	{
-		Person = person;
-		Title = title;
-		Name = name;
-	}
+	[Required, JsonIgnore]
+	public virtual Title Title { get; set; } = null!;
+
+	public string Name { get; set; } = "";
 }

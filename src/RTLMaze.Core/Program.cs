@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using RTLMaze.Core;
 using RTLMaze.Core.Scraper;
 using RTLMaze.Core.Scraper.Serializer;
@@ -8,17 +9,14 @@ using RTLMaze.Models;
 
 var jsonOptions = new JsonSerializerOptions { 
 	PropertyNameCaseInsensitive = true,
+	ReferenceHandler = ReferenceHandler.IgnoreCycles,
 	WriteIndented = true,
 	Converters = { 
 		new DateOnlySerializer(),
 		new DateOnlyNullableSerializer(), 
 
 		new CastDeserializer(),
-		new TitleDeserializer(),
-
-		new InterfaceDeserializer<ICast, Cast>(),
-		new InterfaceDeserializer<IPerson, Person>(),
-		new InterfaceDeserializer<ITitle, Title>()
+		new TitleDeserializer()
 	}	
 };
 
@@ -54,11 +52,9 @@ foreach( int id in updated )
 
 	var source2 = new FileStream( "Local/show.json", FileMode.Open );
 
-	var result2 = new JsonStreamProcessor<ITitle>()
+	var result2 = new JsonStreamProcessor<Title>()
 				.SetJsonOptions( jsonOptions )
 				.Process( source2 );
-
-
 
 	Console.WriteLine( JsonSerializer.Serialize( result2, jsonOptions ) );
 

@@ -8,8 +8,8 @@ static public class Configure
 	public static void ConfigureServices( IServiceCollection services  )
 	{
 		services
-			.AddScoped<IRepository<Title>, AtomicRepository<Title>>();
-		// 	.AddScoped<IRepository<Teacher>, AtomicRepository<Teacher>>()
-		// 	.AddScoped<IRepository<Person>, AtomicRepository<Person>>();
+			.AddScoped<IRepository<Title>, AtomicRepository<Title>>()
+			.AddScoped<IRepository<Person>, AtomicRepository<Person>>()
+		 	.AddScoped<IRepository<Cast>, AtomicRepository<Cast>>();
 	}
 }

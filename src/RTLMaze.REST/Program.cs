@@ -24,7 +24,7 @@ mvcBuilder.AddJsonOptions( options =>
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
 	options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
-	options.JsonSerializerOptions.Converters.Add( new DateOnlyNullableSerializer() );
+	options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
 	//options.JsonSerializerOptions.Converters.Add( new JsonStringEnumConverter() );
 });
 
@@ -75,11 +75,14 @@ builder.Services.AddCors( c => c.AddDefaultPolicy( b =>
 
 // Set database context
 builder.Services
-			.AddDbContext<RTLMaze.DAL.RTLMazeStorageContext>( 
-				c => c.UseSqlite( 
-					builder.Configuration.GetConnectionString("DefaultConnection"), 
-					b => b.MigrationsAssembly("RTLMaze.REST") 
-				) );
+			.AddDbContext<RTLMaze.DAL.RTLMazeStorageContext>( c => {
+				c
+					.UseLazyLoadingProxies()
+					.UseSqlite( 
+						builder.Configuration.GetConnectionString("DefaultConnection"), 
+						b => b.MigrationsAssembly("RTLMaze.REST") 
+					); 
+			});
 
 // -- Configure solutions
 RTLMaze.Core.Configure.ConfigureServices( builder.Services );

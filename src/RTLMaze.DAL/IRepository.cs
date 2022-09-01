@@ -8,7 +8,6 @@ public interface IRepository<T, PKeyType>
 	public Task AddAll( IEnumerable<T> items );
 	public Task Delete( PKeyType id );	
 	public Task DeleteAll( IEnumerable<T> items );
-	public Task<IEnumerable<T>> Get<T2>( Expression<Func<T, bool>> predicate );
 	public Task<IEnumerable<T>> GetAll();
 	public Task<T?> GetById( PKeyType id );
 	public IQueryable<T> Query();
