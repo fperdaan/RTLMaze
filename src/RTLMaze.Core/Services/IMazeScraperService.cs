@@ -12,9 +12,13 @@ public interface IMazeScraperService
 
 	// Scraper status info
 	public bool IsAScraperRunning();
-	public DateTime? GetLastRunTime();
 	public Job? GetLastRunJob();
+	public Job? GetLastSuccesfulRunJob();
 
+	// Scraper / processing methods 
+	public ICollection<int> FetchChangedTitles();
+	public IEnumerable<Title> FetchTitleDetails( ICollection<int> ids );
+	
 	// Internal job interface
 	public FluentJob Start();
 	public FluentJob Finish();

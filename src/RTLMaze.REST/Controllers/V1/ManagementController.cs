@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 
-using RTLMaze.Core;
-using RTLMaze.DAL;
 using RTLMaze.Models;
-using Microsoft.Extensions.Options;
 using RTLMaze.Core.Services;
 using RTLMaze.Core.Models;
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
 
 namespace RTLMaze.REST.Controllers.V1;
 
@@ -18,11 +13,12 @@ public partial class ManagementController : Controller
 	[HttpGet, Route("content-update")]
 	public async Task<IActionResult> ContentUpdate( [FromServices] IMazeScraperService scraper )
 	{	
-		//if( scraper.IsAScraperRunning() )
-		//	return new Response<Job>( scraper.GetLastRunJob()! ).Convert();
+		// Only allow one job running at the time
+		if( scraper.IsAScraperRunning() )
+			return new Response<Job>( scraper.GetLastRunJob()! ).Convert();
 
-		// Configure scraper
-		scraper.Since( scraper.GetLastRunTime() );
+		// Configure scraper ( we base it on the start date as this is the last time we scraped the content )
+		scraper.Since( scraper.GetLastRunJob()?.DateStart );
 		
 		// Start script and bugger off
 		await _ContentUpdateAsync( scraper );
@@ -37,6 +33,15 @@ public partial class ManagementController : Controller
 		scraper.Start();
 
 		await Task.Delay(1000);
+
+		var items = scraper.FetchChangedTitles();
+			items = items.Take(10).ToList();
+
+		foreach( Title title in scraper.FetchTitleDetails( items ) )
+		{
+			Console.WriteLine( $"{title.ID} / {title.Name}" );
+		}
+
 
 		// DbContext gets disposed in the meantime, this is not the way
 		// Probabilly check ( https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-6.0&tabs=visual-studio )

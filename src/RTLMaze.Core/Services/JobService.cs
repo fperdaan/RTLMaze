@@ -34,12 +34,9 @@ public partial class JobService : IJobService
 					.FirstOrDefault();
 	}
 
-	public virtual DateTime? GetTimeWhenLastSuccessful( string type ) => GetLastSuccessfulJob( type )?.DateEnd;
-
 	// convience while managing the job from the repo
 	public virtual Task Save( Job job )
 	{
-		Console.WriteLine("Save job");
 		return _repo.Save( job );
 	}
 

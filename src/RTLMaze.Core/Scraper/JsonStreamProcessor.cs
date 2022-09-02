@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace RTLMaze.Core.Scraper;
 
-public partial class JsonStreamProcessor<T> : IJsonStreamProcessor<T> where T : class
+public partial class JsonStreamProcessor<T> : IJsonStreamProcessor<T>
 {
 	public JsonSerializerOptions JsonOptions { get; private set; }
 	
@@ -16,9 +16,9 @@ public partial class JsonStreamProcessor<T> : IJsonStreamProcessor<T> where T : 
 	/// <summary>
 	/// DI Interface, used to inherit the options from the DI configuration
 	/// </summary>
-	public JsonStreamProcessor( IOptions<ScraperOptions> options ) 
+	public JsonStreamProcessor( ScraperOptions options ) 
 	{
-		JsonOptions = options.Value.JsonSerializerOptions;
+		JsonOptions = options.JsonSerializerOptions;
 	} 
 
 	# region Fluent interface

@@ -12,6 +12,10 @@ static public class Configure
 	{
 		// -- Add global serializer configuration
 		services.Configure<ScraperOptions>( options => {
+			options.UpdateUrl = "https://api.tvmaze.com/updates/shows";
+			options.DetailUrl = ( int id ) => $"https://api.tvmaze.com/shows/{id}?embed=cast";
+
+			// JsonSerializer
 			options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 			
 			options.JsonSerializerOptions.Converters.Add( new DateOnlySerializer() );
