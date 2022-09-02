@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using System.Text.Json.Serialization;
+using Polly;
 
 var builder = WebApplication.CreateBuilder( args );
 
@@ -17,6 +18,8 @@ var builder = WebApplication.CreateBuilder( args );
 # region Start configuration
 
 var mvcBuilder = builder.Services.AddControllers();
+
+# region Server configuration
 
 mvcBuilder.AddJsonOptions( options => 
 {
@@ -28,12 +31,29 @@ mvcBuilder.AddJsonOptions( options =>
 	//options.JsonSerializerOptions.Converters.Add( new JsonStringEnumConverter() );
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 // use lowercase urls
 builder.Services.AddRouting( options => options.LowercaseUrls = true );
 
+// Overload default error response with our model
+builder.Services.Configure<ApiBehaviorOptions>( options => 
+{
+    options.InvalidModelStateResponseFactory = context => new ResponseError<bool>( new ValidationProblemDetails( context.ModelState ) ).Convert();
+});
+
+// -- Configure cors ( enable all for now )
+builder.Services.AddCors( c => c.AddDefaultPolicy( b => 
+{
+	b.AllowAnyOrigin()
+	 .AllowAnyMethod()
+	 .AllowAnyHeader();
+} ) );
+
+# endregion
+
+# region Swagger / versioning
+
 // -- Configure swagger
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureOptions<SwaggerVersionProvider>();
 builder.Services.AddSwaggerGen( c => 
 {
@@ -59,21 +79,11 @@ builder.Services.AddVersionedApiExplorer( setup =>
 	setup.SubstituteApiVersionInUrl = true;
 });
 
-// Overload default error response with our model
-builder.Services.Configure<ApiBehaviorOptions>( options => 
-{
-    options.InvalidModelStateResponseFactory = context => new ResponseError<bool>( new ValidationProblemDetails( context.ModelState ) ).Convert();
-});
+# endregion
 
-// -- Configure cors ( enable all for now )
-builder.Services.AddCors( c => c.AddDefaultPolicy( b => 
-{
-	b.AllowAnyOrigin()
-	 .AllowAnyMethod()
-	 .AllowAnyHeader();
-} ) );
+# region Library configuration 
 
-// Set database context
+// -- Set database context
 builder.Services
 			.AddDbContext<RTLMaze.DAL.RTLMazeStorageContext>( c => {
 				c
@@ -87,6 +97,8 @@ builder.Services
 // -- Configure solutions
 RTLMaze.Core.Configure.ConfigureServices( builder.Services );
 RTLMaze.DAL.Configure.ConfigureServices( builder.Services );
+
+# endregion
 
 # endregion
 
