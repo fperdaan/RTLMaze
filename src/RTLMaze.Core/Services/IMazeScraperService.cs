@@ -22,4 +22,5 @@ public interface IMazeScraperService
 	// Internal job interface
 	public FluentJob Start();
 	public FluentJob Finish();
+	public FluentJob Finish( JobStatus status );
 }

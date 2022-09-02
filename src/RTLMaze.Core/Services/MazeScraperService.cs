@@ -58,9 +58,11 @@ public partial class MazeScraperService : IMazeScraperService
 		return Job;
 	}
 
-	public virtual FluentJob Finish()
+	public virtual FluentJob Finish() => Finish( JobStatus.Processed );
+
+	public virtual FluentJob Finish( JobStatus status )
 	{
-		Job.End().Save();
+		Job.End( status ).Save();
 	
 		return Job;
 	}
