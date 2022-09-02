@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using System.Text.Json.Serialization;
-using Polly;
 
 var builder = WebApplication.CreateBuilder( args );
 

@@ -74,24 +74,36 @@ public partial class HttpSource : IHttpSource
 	protected virtual async Task<Stream> _GetSource( int attempt )
 	{
 		HttpClient client = new HttpClient();
-		var response = await client.GetAsync( _sourceUrl );
 
-		// -- Check for valid response and reboot if failed
-		if( response.IsSuccessStatusCode )
-			return response.Content.ReadAsStream();
-
-		if( _retryStatusWhitelist.Contains( response.StatusCode )  && attempt < _requestMaxAttempts )
-		{	
-			// Delay task and try to fetch it again 
-			await Task.Delay( _requestsTimeout );
-
-			return await _GetSource( attempt + 1 );
-		}
+		try 
+		{
+			var response = await client.GetAsync( _sourceUrl );
 		
-		throw new SourceUnavailibleException( 
-			message: "Unable to connect with the specified source, max attempts exceeded", 
-			lastStatusCode: response.StatusCode 
-		);
+			// -- Check for valid response and reboot if failed
+			if( response.IsSuccessStatusCode )
+				return response.Content.ReadAsStream();
+
+			if( _retryStatusWhitelist.Contains( response.StatusCode )  && attempt < _requestMaxAttempts )
+			{	
+				// Delay task and try to fetch it again 
+				await Task.Delay( _requestsTimeout );
+
+				return await _GetSource( attempt + 1 );
+			}
+
+			throw new SourceUnavailibleException( 
+				message: "Unable to connect with the specified source, max attempts exceeded", 
+				lastStatusCode: response.StatusCode 
+			);
+		}
+		catch( SourceUnavailibleException e )
+		{
+			throw e;
+		}
+		catch( Exception e )
+		{
+			throw new SourceUnavailibleException( "Unable to connect with the specified source", e );
+		}
 	}
 	
 	# endregion
