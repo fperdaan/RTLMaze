@@ -1,14 +1,11 @@
 using System.Net;
+using Polly;
 
 namespace RTLMaze.Core.Scraper;
 
 public interface IHttpSource : ISource<Stream>
 {
-	public IHttpSource RetryOnStatuscode( HttpStatusCode code );
+	public IHttpSource FromUrl( string sourceUrl );
 
-	public IHttpSource FromUrl( string source );
-
-	public IHttpSource SetMaxRequestAttempts( int amount );
-
-	public IHttpSource SleepSecondsBetweenAttempts( int sleep );
+	public IHttpSource SetRequestPolicy( IAsyncPolicy<HttpResponseMessage> policy );
 }

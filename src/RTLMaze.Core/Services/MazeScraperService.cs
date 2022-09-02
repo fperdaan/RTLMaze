@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Polly.RateLimit;
 using RTLMaze.Core.Models;
 using RTLMaze.Core.Scraper;
 using RTLMaze.Models;
@@ -14,6 +15,8 @@ public partial class MazeScraperService : IMazeScraperService
 	protected ScraperOptions _options;
 	public long? SinceDate { get; set; }
 
+	private RateLimitPolicy _rateLimitPolicy;
+	
 	private FluentJob? _job;
 	public FluentJob Job
 	{
@@ -30,6 +33,8 @@ public partial class MazeScraperService : IMazeScraperService
 	{
 		_jobService = jobService;
 		_options = options.Value;
+
+		_rateLimitPolicy = _options.HttpRateLimiterPolicy;
 	}
 
 	public bool IsAScraperRunning() => GetLastRunJob()!.Status == JobStatus.Running;
@@ -44,6 +49,14 @@ public partial class MazeScraperService : IMazeScraperService
 
 		return this;
 	}
+
+	public virtual IMazeScraperService SetRateLimitPolicy( RateLimitPolicy policy )
+	{
+		_rateLimitPolicy = policy;
+
+		return this;
+	}
+
 	# endregion
 
 	# region Job interface
@@ -81,16 +94,36 @@ public partial class MazeScraperService : IMazeScraperService
 
 	public virtual IEnumerable<Title> FetchTitleDetails( ICollection<int> ids )
 	{
+		var policy = _rateLimitPolicy;
+
 		var titleProcessor = new JsonStreamProcessor<Title>( _options );
 		var source = new HttpSource( _options );
-
+		
 		foreach( int id in ids )
 		{
-			var title = titleProcessor.Process( source.FromUrl( _options.DetailUrl( id ) ) );
+			Title? title = _Throttle( 0, 3, policy, () => titleProcessor.Process( source.FromUrl( _options.DetailUrl( id ) ) ) );
 
 			// Ensure we have valid output
-			if( title.ID != default( int ) )
+			if( title != null && title.ID != default( int ) )
 				yield return title;
+		}
+	}
+
+	protected virtual Title? _Throttle( int attempt, int maxAttempts, RateLimitPolicy policy, Func<Title> request )
+	{
+		try
+		{
+			return policy.Execute( request );
+		}
+		catch( RateLimitRejectedException )
+		{
+			if( attempt + 1 >= maxAttempts )
+				return null;
+
+			Console.WriteLine( $"{Thread.CurrentThread.ManagedThreadId} hit limit, delaying output" );
+			Thread.Sleep( 10000 );
+
+			return _Throttle( attempt, maxAttempts, policy, request );
 		}
 	}
 

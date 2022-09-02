@@ -35,13 +35,11 @@ public partial class ManagementController : Controller
 		try 
 		{
 			var items = scraper.FetchChangedTitles();
-				items = items.Skip(20).Take(20).ToList();
+				items = items.Skip(100).Take(5).ToList();
 
 			scraper.FetchTitleDetails( items )
 				.AsParallel()
-				.ForAll( title => {
-					importer.Import( title );
-				});
+				.ForAll( title => importer.Import( title ) );
 
 			importer.Process();
 			scraper.Finish();

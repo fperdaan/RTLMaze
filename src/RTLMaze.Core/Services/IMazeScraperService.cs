@@ -1,3 +1,4 @@
+using Polly.RateLimit;
 using RTLMaze.Core.Models;
 using RTLMaze.Models;
 
@@ -9,6 +10,7 @@ public interface IMazeScraperService
 
 	// Configuration
 	public IMazeScraperService Since( DateTime? date );
+	public IMazeScraperService SetRateLimitPolicy( RateLimitPolicy policy );
 
 	// Scraper status info
 	public bool IsAScraperRunning();

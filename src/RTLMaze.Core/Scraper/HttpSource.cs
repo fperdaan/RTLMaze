@@ -1,14 +1,24 @@
 using System.Net;
 using Microsoft.Extensions.Options;
+using Polly;
 
 namespace RTLMaze.Core.Scraper;
 
 public partial class HttpSource : IHttpSource
 {
-	private int _requestMaxAttempts = 5;
-	private int _requestsTimeout = 1000;
 	private string? _sourceUrl;
-	private ICollection<HttpStatusCode> _retryStatusWhitelist = new List<HttpStatusCode> { HttpStatusCode.TooManyRequests };
+	private IAsyncPolicy<HttpResponseMessage>? _requestPolicy;
+
+	public IAsyncPolicy<HttpResponseMessage> RequestPolicy 
+	{
+		get {
+			if( _requestPolicy == null )
+				_requestPolicy = _GetDefaultRequestPolicy();
+			
+			return _requestPolicy;
+		}
+	}
+
 
 	public HttpSource( string source = "" )
 	{
@@ -18,44 +28,39 @@ public partial class HttpSource : IHttpSource
 	public HttpSource( IOptions<ScraperOptions> options ) : this( options.Value ) { }
 	public HttpSource( ScraperOptions options ) : this( "" )
 	{
-		RetryOnStatuscode( options.HttpSourceOptions.RetryOnStatusCode )
-			.SetMaxRequestAttempts( options.HttpSourceOptions.RequestMaxAttempts )
-			.SleepSecondsBetweenAttempts( options.HttpSourceOptions.RequestTimeout );
+		//_requestPolicy = options.HttpRequestPolicy;
 	}
 
+	protected virtual IAsyncPolicy<HttpResponseMessage> _GetDefaultRequestPolicy()
+	{
+		var codes = new HttpStatusCode[]{
+			HttpStatusCode.RequestTimeout, // 408
+			HttpStatusCode.InternalServerError, // 500
+			HttpStatusCode.BadGateway, // 502
+			HttpStatusCode.ServiceUnavailable, // 503
+			HttpStatusCode.GatewayTimeout // 504
+		};
+
+		var policy = Policy
+				.Handle<HttpRequestException>()
+				.OrResult<HttpResponseMessage>( r => codes.Contains( r.StatusCode ) )
+				.RetryAsync( 3 );
+
+		return policy;
+	}
 
 	# region Fluid interface
-	public virtual IHttpSource RetryOnStatuscode( ICollection<HttpStatusCode> codes )
-	{
-		_retryStatusWhitelist = codes;
 
-		return this;
-	} 
-
-	public virtual IHttpSource RetryOnStatuscode( HttpStatusCode code ) 
+	public virtual IHttpSource FromUrl( string sourceUrl )
 	{
-		_retryStatusWhitelist.Add( code );
+		_sourceUrl = sourceUrl;
 
 		return this;
 	}
 
-	public virtual IHttpSource FromUrl( string source )
+	public virtual IHttpSource SetRequestPolicy( IAsyncPolicy<HttpResponseMessage> policy )
 	{
-		_sourceUrl = source;
-
-		return this;
-	}
-
-	public virtual IHttpSource SetMaxRequestAttempts( int amount )
-	{
-		_requestMaxAttempts = amount;
-
-		return this;
-	}
-
-	public virtual IHttpSource SleepSecondsBetweenAttempts( int sleep )
-	{
-		_requestsTimeout = sleep;
+		_requestPolicy = policy;
 
 		return this;
 	}
@@ -65,45 +70,11 @@ public partial class HttpSource : IHttpSource
 	# region Source logic
 	public virtual Stream GetSource()
 	{
-		if( _sourceUrl == null )
-			throw new ArgumentException( "source", "No source was specified" );
-
-		return _GetSource( 1 ).Result;		
-	}
-
-	protected virtual async Task<Stream> _GetSource( int attempt )
-	{
 		HttpClient client = new HttpClient();
 
-		try 
-		{
-			var response = await client.GetAsync( _sourceUrl );
-		
-			// -- Check for valid response and reboot if failed
-			if( response.IsSuccessStatusCode )
-				return response.Content.ReadAsStream();
+		var result = RequestPolicy.ExecuteAsync( () => client.GetAsync( _sourceUrl ) ).Result;
 
-			if( _retryStatusWhitelist.Contains( response.StatusCode )  && attempt < _requestMaxAttempts )
-			{	
-				// Delay task and try to fetch it again 
-				await Task.Delay( _requestsTimeout );
-
-				return await _GetSource( attempt + 1 );
-			}
-
-			throw new SourceUnavailibleException( 
-				message: "Unable to connect with the specified source, max attempts exceeded", 
-				lastStatusCode: response.StatusCode 
-			);
-		}
-		catch( SourceUnavailibleException e )
-		{
-			throw e;
-		}
-		catch( Exception e )
-		{
-			throw new SourceUnavailibleException( "Unable to connect with the specified source", e );
-		}
+		return result.Content.ReadAsStream();
 	}
 	
 	# endregion
