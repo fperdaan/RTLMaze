@@ -7,4 +7,3 @@ obj
 
 # Ignore migrations folder while testing
 **/Migrations
-Local
