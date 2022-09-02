@@ -1,6 +1,6 @@
 namespace RTLMaze.Core.Scraper;
 
-public interface ISource
+public interface ISource<TOutput>
 {
-	public Stream GetSource();
+	public TOutput GetSource();
 }

@@ -32,8 +32,6 @@ public partial class ManagementController : Controller
 		Console.WriteLine("Start job");
 		scraper.Start();
 
-		await Task.Delay(1000);
-
 		var items = scraper.FetchChangedTitles();
 			items = items.Take(10).ToList();
 

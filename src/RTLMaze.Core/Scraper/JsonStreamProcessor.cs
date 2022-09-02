@@ -63,5 +63,5 @@ public partial class JsonStreamProcessor<T> : IJsonStreamProcessor<T>
 		return result;
 	}
 
-	public T Process( ISource input ) => Process( input.GetSource() );
+	public T Process( ISource<Stream> input ) => Process( input.GetSource() );
 }

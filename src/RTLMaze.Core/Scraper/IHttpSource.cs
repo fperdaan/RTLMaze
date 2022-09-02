@@ -2,7 +2,7 @@ using System.Net;
 
 namespace RTLMaze.Core.Scraper;
 
-public interface IHttpSource : ISource
+public interface IHttpSource : ISource<Stream>
 {
 	public IHttpSource RetryOnStatuscode( HttpStatusCode code );
 

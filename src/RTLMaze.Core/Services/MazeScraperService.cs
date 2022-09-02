@@ -35,7 +35,7 @@ public partial class MazeScraperService : IMazeScraperService
 	public bool IsAScraperRunning() => GetLastRunJob()!.Status == JobStatus.Running;
 
 	# region Configuration methods
-	public IMazeScraperService Since( DateTime? date )
+	public virtual IMazeScraperService Since( DateTime? date )
 	{
 		if( date != null )
 			SinceDate = new DateTimeOffset( (DateTime)date ).ToUnixTimeSeconds();
@@ -48,17 +48,17 @@ public partial class MazeScraperService : IMazeScraperService
 
 	# region Job interface
 
-	public Job? GetLastSuccesfulRunJob() => _jobService.GetLastSuccessfulJob( JOB_TYPE );
-	public Job? GetLastRunJob() => _jobService.GetLatestForType( JOB_TYPE );
+	public virtual Job? GetLastSuccesfulRunJob() => _jobService.GetLastSuccessfulJob( JOB_TYPE );
+	public virtual Job? GetLastRunJob() => _jobService.GetLatestForType( JOB_TYPE );
 
-	public FluentJob Start()
+	public virtual FluentJob Start()
 	{
 		Job.Start().Save();
 	
 		return Job;
 	}
 
-	public FluentJob Finish()
+	public virtual FluentJob Finish()
 	{
 		Job.End().Save();
 	
@@ -71,27 +71,20 @@ public partial class MazeScraperService : IMazeScraperService
 
 	public virtual ICollection<int> FetchChangedTitles()
 	{
-		var result = new JsonStreamProcessor<Dictionary<string, int>>( _options )
-						.Process( new HttpSource( _options.UpdateUrl ) );
-						
-		var query = result.AsQueryable();
+		var source = new ChangedTitleSource( _options );
+			source.SinceDate = SinceDate;
 
-		if( SinceDate != null )
-			query = query.Where( kv => kv.Value >= SinceDate );
-
-		return query
-				.Select( kv => Int32.Parse( kv.Key ) )
-				.ToList();
+		return source.GetSource();
 	}
 
 	public virtual IEnumerable<Title> FetchTitleDetails( ICollection<int> ids )
 	{
 		var titleProcessor = new JsonStreamProcessor<Title>( _options );
+		var source = new HttpSource( _options );
 
 		foreach( int id in ids )
 		{
-			var source = new HttpSource( _options.DetailUrl( id ) );
-			var title = titleProcessor.Process( source );
+			var title = titleProcessor.Process( source.FromUrl( _options.DetailUrl( id ) ) );
 
 			// Ensure we have valid output
 			if( title.ID != default( int ) )
