@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1703.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTLMaze.Core", "src\RTLMaze.Core\RTLMaze.Core.csproj", "{62CB76B0-2949-4B0A-A553-BBDF04F7BF58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTLMaze.DAL", "src\RTLMaze.DAL\RTLMaze.DAL.csproj", "{D10CE80F-4D00-4884-AE30-1615B616CE96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTLMaze.Models", "src\RTLMaze.Models\RTLMaze.Models.csproj", "{88F23786-71A8-443F-9462-7B528BF53F77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTLMaze.REST", "src\RTLMaze.REST\RTLMaze.REST.csproj", "{CDA50F75-FFFC-4F75-B48A-162073584873}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62CB76B0-2949-4B0A-A553-BBDF04F7BF58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62CB76B0-2949-4B0A-A553-BBDF04F7BF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62CB76B0-2949-4B0A-A553-BBDF04F7BF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62CB76B0-2949-4B0A-A553-BBDF04F7BF58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10CE80F-4D00-4884-AE30-1615B616CE96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10CE80F-4D00-4884-AE30-1615B616CE96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10CE80F-4D00-4884-AE30-1615B616CE96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10CE80F-4D00-4884-AE30-1615B616CE96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88F23786-71A8-443F-9462-7B528BF53F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88F23786-71A8-443F-9462-7B528BF53F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88F23786-71A8-443F-9462-7B528BF53F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88F23786-71A8-443F-9462-7B528BF53F77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDA50F75-FFFC-4F75-B48A-162073584873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDA50F75-FFFC-4F75-B48A-162073584873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDA50F75-FFFC-4F75-B48A-162073584873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDA50F75-FFFC-4F75-B48A-162073584873}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7606F7D1-D33A-4178-B040-F7FB246E3D11}
+	EndGlobalSection
+EndGlobal
